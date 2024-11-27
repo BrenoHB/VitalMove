@@ -1,5 +1,5 @@
 using System;
-using DTOs.VitalMoveUsers;
+using VitalMoveDTO;
 using Util.DB;
 using MySql.Data.MySqlClient;
 
@@ -37,49 +37,47 @@ namespace Util.Login
                 }
             }
         }
-public static bool Register(UserRegisterDTO credential)
-{
-    string conn = DbString.Context();
-    string selectQuery = "SELECT usuario FROM usuarios WHERE usuario = @username";
-    string insertQuery = "INSERT INTO usuarios (usuario, senha, CPF) VALUES (@username, @password, @CPF)";
-
-    try
-    {
-        using (var connection = new MySqlConnection(conn))
+        public static bool Register(UserRegisterDTO credential)
         {
-            connection.Open();
+            string conn = DbString.Context();
+            string selectQuery = "SELECT usuario FROM usuarios WHERE usuario = @username";
+            string insertQuery = "INSERT INTO usuarios (usuario, senha, CPF) VALUES (@username, @password, @CPF)";
 
-            // Verifica se o usuário já existe
-            using (var selectCommand = new MySqlCommand(selectQuery, connection))
+            try
             {
-                selectCommand.Parameters.AddWithValue("@username", credential.Username);
-
-                using (var reader = selectCommand.ExecuteReader())
+                using (var connection = new MySqlConnection(conn))
                 {
-                    if (reader.Read())
+                    connection.Open();
+                    using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
-                        return false;
+                        selectCommand.Parameters.AddWithValue("@username", credential.Username);
+
+                        using (var reader = selectCommand.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                return false;
+                            }
+                        }
+                    }
+
+
+                    using (var insertCommand = new MySqlCommand(insertQuery, connection))
+                    {
+                        insertCommand.Parameters.AddWithValue("@username", credential.Username);
+                        insertCommand.Parameters.AddWithValue("@password", credential.Password);
+                        insertCommand.Parameters.AddWithValue("@CPF", credential.CPF);
+
+                        insertCommand.ExecuteNonQuery();
+                        return true;
                     }
                 }
             }
-
-
-            using (var insertCommand = new MySqlCommand(insertQuery, connection))
+            catch (Exception ex)
             {
-                insertCommand.Parameters.AddWithValue("@username", credential.Username);
-                insertCommand.Parameters.AddWithValue("@password", credential.Password);
-                insertCommand.Parameters.AddWithValue("@CPF", credential.CPF);
-
-                insertCommand.ExecuteNonQuery();
-                return true;
+                Console.WriteLine($"Erro ao registrar o usuário: {ex.Message}");
+                return false;
             }
         }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Erro ao registrar o usuário: {ex.Message}");
-        return false;
-    }
-}
     }
 }

@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using DTOs.VitalMoveUsers;
+using VitalMoveDTO;
 using Util.Login;
+using Services.Alimentacao;
 
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(); 
+builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -46,6 +47,39 @@ app.MapPost("/register", (UserRegisterDTO credentials) =>
     }
 })
 .WithName("register");
+
+
+app.MapPost("/PostAlimentacao", (AlimentacaoResponseDTO AlimentacaoResponseDTO) =>
+{
+    bool isValid = Alimentacao.PostAlimentacao(AlimentacaoResponseDTO);
+    if (isValid)
+    {
+        return Results.Ok("Refeição não registrada com sucesso");
+    }
+    else
+    {
+        return Results.BadRequest("Refeição registrada com sucesso");
+    }
+})
+.WithName("PostAlimentacao");
+
+app.MapPost("/GetAlimentacao", (AlimentacaoRequestDTO AlimentacaoRequestDTO) =>
+{
+    try
+    {
+        List<AlimentacaoResponseDTO> listAlimentacaoResponseDTO = Alimentacao.GetAlimentacao(AlimentacaoRequestDTO);
+        return Results.Ok(listAlimentacaoResponseDTO);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+
+
+
+
+})
+.WithName("GetAlimentacao");
 
 app.Run();
 

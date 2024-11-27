@@ -1,4 +1,4 @@
-namespace DTOs.VitalMoveUsers
+namespace VitalMoveDTO
 {
     public class UserRegisterDTO
     {
