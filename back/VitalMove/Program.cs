@@ -4,6 +4,8 @@ using Microsoft.Extensions.Hosting;
 using VitalMoveDTO;
 using Util.Login;
 using Services.Alimentacao;
+using Services.AtFisica;
+using Services.IMC;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -80,6 +82,74 @@ app.MapPost("/GetAlimentacao", (AlimentacaoRequestDTO AlimentacaoRequestDTO) =>
 
 })
 .WithName("GetAlimentacao");
+
+app.MapPost("/PostAtFisica", (AtFisicaResponseDTO AtFisicaResponseDTO) =>
+{
+    bool isValid = AtFisica.PostAtFisica(AtFisicaResponseDTO);
+    if (isValid)
+    {
+        return Results.Ok("Atividade registrada com sucesso");
+    }
+    else
+    {
+        return Results.BadRequest("Atividade não registrada com sucesso");
+    }
+})
+.WithName("PostAtFisica");
+
+app.MapPost("/GetAtFisica", (AtFisicaRequestDTO AtFisicaRequestDTO) =>
+{
+    try
+    {
+        List<AtFisicaResponseDTO> listAtFisicaResponseDTO = AtFisica.GetAtFisica(AtFisicaRequestDTO);
+        return Results.Ok(listAtFisicaResponseDTO);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+
+
+
+
+})
+.WithName("GetAtFisica");
+
+
+
+
+app.MapPost("/PostIMC", (IMCResponseDTO IMCResponseDTO) =>
+{
+    bool isValid = IMC.PostIMC(IMCResponseDTO);
+    if (isValid)
+    {
+        return Results.Ok("Atividade registrada com sucesso");
+    }
+    else
+    {
+        return Results.BadRequest("Atividade não registrada com sucesso");
+    }
+})
+.WithName("PostIMC");
+
+app.MapPost("/GetIMC", (IMCRequestDTO IMCRequestDTO) =>
+{
+    try
+    {
+        List<IMCResponseDTO> listIMCResponseDTO = IMC.GetIMC(IMCRequestDTO);
+        return Results.Ok(listIMCResponseDTO);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+
+
+
+
+})
+.WithName("GetIMC");
+
 
 app.Run();
 
