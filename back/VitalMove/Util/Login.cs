@@ -17,7 +17,7 @@ namespace Util.Login
                 using (var command = new MySqlCommand(query, connection))
                 {
 
-                    command.Parameters.AddWithValue("@username", credential.Username);
+                    command.Parameters.AddWithValue("@username", credential.CPF);
                     command.Parameters.AddWithValue("@password", credential.Password);
 
                     connection.Open();
@@ -50,7 +50,7 @@ namespace Util.Login
                     connection.Open();
                     using (var selectCommand = new MySqlCommand(selectQuery, connection))
                     {
-                        selectCommand.Parameters.AddWithValue("@username", credential.Username);
+                        selectCommand.Parameters.AddWithValue("@username", credential.CPF);
 
                         using (var reader = selectCommand.ExecuteReader())
                         {
